@@ -1,0 +1,181 @@
+<div class="outer">
+	<div class="row">
+		<div class="col-sm-3 lf">
+			<div class="left000">
+				<div class="iconDiv bg-green"><i  class="iconfont icon-yun"></i></div>
+				<div class="numDiv">
+					<span>99.9%</span>
+					<small>SERVER UPTIME</small>
+				</div>
+			</div>
+			<div class="left000">
+				<div class="iconDiv bg-purple"><i  class="iconfont icon-ai-user"></i></div>
+				<div class="numDiv">
+					<span>117k</span>
+					<small>USERS TATAL</small>
+				</div>
+			</div>
+			<div class="left000">
+				<div class="iconDiv bg-blue"><i  class="iconfont icon-18"></i></div>
+				<div class="numDiv">
+					<span>2,470</span>
+					<small>NEW DAILY PHOTOS</small>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 center_tp">
+			<div id="visContainer"></div>
+			<div class="numDiv num">
+				<span class="tp_sp">14.85%</span>
+				<small>More visitors</small>
+			</div>
+		</div>
+		<div class="col-sm-3">
+			<div>
+				<div id="uptime"></div>
+				<div class="numDiv num" id="num">
+					<span class="tp_sp">95.8%</span>
+					<small>CURRENT SERVER UPTIME</small>
+				</div>
+			</div>
+			<div class="nu123">
+				<div id="sales"></div>
+				<div class="numDiv num" id="num001">
+					<span class="tp_sp">320,45</span>
+					<small>AVG. OF SALES</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(function(){
+			visitor()
+			function visitor(){
+				var chart = Highcharts.chart('visContainer', {
+					chart:{
+						margin:[0,0,0,0],
+					},
+					colors:['#66bb0d','#ccc'],
+					credits:{
+						enabled:false,
+					},
+					title: {
+						text: ''
+					},
+					subtitle: {
+						text: ''
+					},
+					yAxis: {
+						title: {
+							text: ''
+						},
+						visible:false,
+					},
+					xAxis: {
+						visible:false,
+					},
+					legend: {
+						floating:true,
+						layout: 'vertical',
+						align: 'right',
+						verticalAlign: 'top'
+					},
+					plotOptions: {
+						series: {
+							label: {
+								connectorAllowed: false
+							},
+							pointStart: 2010
+						}
+					},
+					series: [{
+						name: 'Pageviews',
+						data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+					}, {
+						name: 'Vistors',
+						data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+					}],
+					responsive: {
+						rules: [{
+							condition: {
+								maxWidth: 500
+							},
+							chartOptions: {
+								legend: {
+									layout: 'horizontal',
+									align: 'center',
+									verticalAlign: 'bottom'
+								}
+							}
+						}]
+					}
+				});
+			}
+			drawUptime();
+			function drawUptime(){
+				var chart = Highcharts.chart('uptime', {
+				colors:['#862eb7'],
+				credits:{
+					enabled:false,
+				},
+				title: {
+					text: ''
+				},
+				xAxis: {
+					visible:false,
+				},
+				yAxis: {
+					visible:false,
+				},
+				series: [{
+					type: 'column',
+					colorByPoint: true,
+					data: [29.9, 40.5, 50.4, 45.2, 57.0, 60.0, 67.6, 40.5, 66.4, 55.1, 95.6, 54.4],
+					showInLegend: false
+				}]
+				});
+			}
+			sal()
+			function sal(){
+				var chart = Highcharts.chart('sales', {
+					credits:{
+						enabled:false,
+					},
+					chart: {
+						margin : [0, 0 , 0, 100]
+					},
+					title: {
+						floating:true,
+						text: ''
+					},
+					tooltip: {
+						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+					},
+					plotOptions: {
+						pie: {
+							allowPointSelect: true,
+							cursor: 'pointer',
+							dataLabels: {
+								enabled: false,
+							},
+						}
+					},
+					series: [{
+						type: 'pie',
+						innerSize: '60%',
+						name: 'Sales',
+						data: [
+							['Firefox',45.0],
+							['IE',26.8],
+							['Chrome',12.8],
+							['Safari',8.5],
+							['Opera',6.2],
+							['其他',0.7]
+						]
+					}]
+				});
+
+			}
+		});
+	</script>
+</div>

@@ -1,0 +1,15 @@
+$(function(){
+	$('#center_bigBody').load('./pages/sy.html');
+	$('.li1').click(function(){
+		$('#center_bigBody').load('./pages/sy.html');
+	});
+	$('.li2').click(function(){
+		$('#center_bigBody').load('./pages/lmgl.html');
+	});
+	$('.li3').click(function(){
+		$('#center_bigBody').load('./pages/zxgl.html');
+	});
+	$('.li4').click(function(){
+		$('#center_bigBody').load('./pages/yhgl.html');
+	});
+});

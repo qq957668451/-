@@ -1,0 +1,275 @@
+<div class="yhgl_outer">
+	<div>
+		<button class="btn btn-success btn-sm addBtn">新增</button>
+	</div>
+	<div class="yhgl_hide">
+		<div class="row yhgl_body">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="thumbnail">
+						<img class="img-circle" style="width: 150px;height: 150px;" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1514093920321&di=913e88c23f382933ef430024afd9128a&imgtype=0&src=http%3A%2F%2Fp.3761.com%2Fpic%2F9771429316733.jpg" alt="...">
+						<div class="caption">
+						<!-- 用户信息 -->
+						<div class="row">
+							<div class="col-sm-4 col-sm-offset-1">用户名</div>
+							<div class="col-sm-5">vicky</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4 col-sm-offset-1">真实姓名</div>
+							<div class="col-sm-5">乔美丽</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4 col-sm-offset-1">注册时间</div>
+							<div class="col-sm-5">2018-09-27</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4 col-sm-offset-1">email</div>
+							<div class="col-sm-5">qiaoml@briup.cn</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4 col-sm-offset-1">状态</div>
+							<div class="col-sm-5">
+								<!-- 用户id -->
+								<input type="hidden" value="1001">
+								<!-- 开关按钮 -->
+								<div class="switch">
+									<input type="checkbox"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	
+	<div class="modal" id="yhgl_modal">
+		<div class="modal-dialog" id="yhgl_dialog">
+			<div class="modal-content" id="yhgl_content">
+				<div class="modal-header text-center">
+					<div class="yhgl_modal_fanhui">
+						<i class="iconfont icon-zuo"></i><span>返回</span>
+					</div>
+					<div>添加用户</div>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form">
+						<div class="form-group">
+							<label for="">用户名</label>
+							<input class="form-control" name="username" type="text">
+						</div>
+						<div class="form-group">
+							<label for="">密码</label>
+							<input type="password" class="form-control" name="password">
+						</div>
+						<div class="form-group">
+							<label for="">确认密码</label>
+							<input type="password" class="form-control" name="password1">
+						</div>
+						<div class="form-group">
+							<label for="">真实姓名</label>
+							<input type="text" class="form-control" name="nickname">
+						</div>
+						<div class="form-group">
+							<label for="">邮箱</label>
+							<input type="email" class="form-control" name="email">
+						</div>
+						<div class="form-group hide">
+							<button type="reset">重置</button>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<!-- 提示信息 -->
+					<span class="yhgl_messageSpan"></span>
+					<button class="btn btn-success btn-sm yhgl_saveBtn">提 交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="yhgl_alertDiv animated slideInRight">
+		<div class="alert alert-success">
+			<strong>提示：</strong>
+			<span>执行成功</span>
+		</div>
+	</div>
+	<style>
+		#yhgl_modal{
+			background: rgba(0,0,0,0.1);
+		}
+		#yhgl_dialog{
+			width: 300px;
+			margin-top: 0;
+			margin-right: 0;
+		}
+		.yhgl_modal_fanhui{
+			float: left;
+			cursor: pointer;
+		}
+		.yhgl_messageSpan{
+			color: red;
+		}
+
+		.yhgl_alertDiv{
+			display: none;
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			width: 300px;
+		}
+		.yhgl_outer{
+			width: 100%;
+			margin: 0 auto;
+			background: #fff;
+			padding: 10px;
+			height: 800px;
+			overflow: auto;
+		}
+		.yhgl_hide{
+			overflow: hidden;
+		}
+		.yhgl_body{
+			font-size: 16px;
+			margin-top: 10px;
+			overflow: auto;
+		}
+		.addBtn{
+			margin-left: 12px;
+		}
+		.caption .row{
+			line-height: 40px;
+			width: 300px;
+		}
+		.thumbnail{
+			box-shadow: 3px 3px 3px #ccc;
+		}
+		#yh_right{
+			color: #666;
+			height: 800px;
+			width: 300px;
+			padding: 20px;
+			background: white;
+			position: absolute;
+			right:0px;
+			top: 0;
+			border: 1px solid #000;
+			font-size: 12px;
+			display: none;
+			z-index: 2;
+		}
+		#yhgl_everyrow{
+			width: 270px;
+		}
+	</style>
+	<script>
+		$(function(){
+			$('#yhgl_content').height($(window).height());
+			$('button:contains(新增)').click(function(){
+				$('#yhgl_modal').show();
+			});
+			$('.yhgl_modal_fanhui').click(function(){
+				$('#yhgl_modal').hide();
+			});
+			$(".yhgl_outer").on({
+				'switchChange.bootstrapSwitch':function (event,state) {
+			          console.log(state);
+			          // 点击修改之后，向后台传递参数
+			          //this--->input---->checkbox--->父 switch--->prev input id
+			          var id = $(this).closest('.switch').prev('input').val();
+			          console.log(id);
+			          //封装成对象传给后台，属性名是由后台接口决定，属性值是前端采集的数据
+			          var obj={
+			          	id:id,
+			          	status:state,
+			          }
+
+			          $.post(baseURL+'/manager/user/changeStatus',obj,function(res){
+			          	console.log(res,'执行成功');
+			          })
+			      }
+			},'[type=checkbox]');
+			yhglData()
+			function yhglData(){
+				$('.yhgl_body').empty();
+				$.get(baseURL+'/manager/user/findAllUser',function(res){
+					res.data.forEach(function(item,index){
+						var $yhgldt = $(`
+					<div class="col-sm-4 yhgl_col4">
+						<div class="thumbnail">
+							<img class="img-circle" style="width: 150px;height: 150px;" src="`+(item.userface?item.userface:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1514093920321&di=913e88c23f382933ef430024afd9128a&imgtype=0&src=http%3A%2F%2Fp.3761.com%2Fpic%2F9771429316733.jpg')+`" alt="...">
+							<div class="caption">
+							<!-- 用户信息 -->
+							<div class="row " id="yhgl_everyrow">
+								<div class="col-sm-4 col-sm-offset-1">用户名</div>
+								<div class="col-sm-5">`+(item.username?item.username:'---')+`</div>
+							</div>
+							<div class="row " id="yhgl_everyrow">
+								<div class="col-sm-4 col-sm-offset-1">真实姓名</div>
+								<div class="col-sm-5">`+(item.nickname?item.nickname:'---')+`</div>
+							</div>
+							<div class="row " id="yhgl_everyrow">
+								<div class="col-sm-4 col-sm-offset-1">注册时间</div>
+								<div class="col-sm-5">`+(item.regTime?item.regTime:'---')+`</div>
+							</div>
+							<div class="row " id="yhgl_everyrow">
+								<div class="col-sm-4 col-sm-offset-1">email</div>
+								<div class="col-sm-5">`+(item.email?item.email:'---')+`</div>
+							</div>
+							<div class="row " id="yhgl_everyrow">
+								<div class="col-sm-4 col-sm-offset-1">状态</div>
+								<div class="col-sm-5">
+									<!-- 用户id -->
+									<input type="hidden" value="`+item.id+`">
+									<!-- 开关按钮 -->
+									<div class="switch">
+										<input type="checkbox"/>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
+					</div>`);
+						$yhgldt.appendTo($('.yhgl_body'))
+						$('.yhgl_outer input[type=checkbox]:last').bootstrapSwitch('state',item.enabled);
+					})
+				})
+			}
+			$('.yhgl_saveBtn').click(function(){
+				var username = $('input[name=username]').val();
+				var password = $('input[name=password]').val();
+				var password1 = $('input[name=password1]').val();
+				var nickname = $('input[name=nickname]').val();
+				var email = $('input[name=email]').val();
+				var message = '';
+				if(username && password && password1 && nickname && email){
+					if(password == password1){
+						//保存
+						var obj = {
+							username:username,
+							password:password,
+							nickname:nickname,
+							email:email
+						}
+						$.post(baseURL+'/manager/user/saveOrUpdateUser',obj,function(res){
+							console.log(res,'保存成功');
+							//刷新页面，关闭模态框，提示用户执行成功，更新数据
+							yhglData();
+							$('#yhgl_modal').hide();
+							$('.yhgl_alertDiv').show();
+							setTimeout(function(){
+								$('.yhgl_alertDiv').fadeOut();
+							},2000)
+
+						})
+					}else{
+						message = '两次密码不一致！';
+					}
+				}else{
+					message = '请输入完整的信息！';
+				}
+				$('.yhgl_messageSpan').html(message);
+			})
+		})
+	</script>
+</div>

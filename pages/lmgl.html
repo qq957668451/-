@@ -1,0 +1,237 @@
+<div class="outer">
+	<div class="lmgl_top">
+		<button class="btn btn-success btn-sm">新增</button>
+		<button class="btn btn-success btn-sm">批量删除</button>
+	</div>
+	<div class="lmgl_gdt">
+		<table class="table table-bordered  lmgl_table text-center" id="lmgl_table">
+			<tr class="text-center">
+				<th>编号</th>
+				<th>栏目名称</th>
+				<th>父栏目</th>
+				<th>描述</th>
+				<th>操作</th>
+			</tr>
+		</table>
+	</div>
+	<div class="modal" id="lmgl_modal">
+		<div class="modal-dialog" id="lmgl_dialog">
+			<div class="modal-content" id="lmgl_content">
+				<div class="modal-header text-center">
+					<div class="lmgl_modal_fanhui">
+						<i class="iconfont icon-zuo"></i><span> 返回</span>
+					</div>
+					<div class="lmgl_title">添加栏目</div>
+				</div>
+				<div class="modal-body">
+					<form action="">
+						<div class="form-group">
+							<label for="">栏目名称</label>
+						    <input type="text" name="name" class="form-control" id=""/>
+						</div>
+						<div class="form-group" id="lmgl_parent">
+							<label for="">父栏目</label>
+						    <select class="form-control" name="parentId" id="lmgl_P">
+						    	<option value="">请选择</option>
+						    </select>
+						</div>
+						<div class="form-group">
+							<label for="">描述</label>
+						    <textarea class="form-control" style="resize:none" name="comment" id="" cols="15" rows="10"></textarea>
+						</div>
+						<div class="form-group hide">
+							<button type="reset">重置</button>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<span class="lmgl_message"></span>
+					<button class="btn btn-success btn-sm" id="lmgl_tj">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		#lmgl_table th{
+			text-align: center;
+		}
+		.lmgl_top{
+			margin-bottom: 10px;
+		}
+		.lmgl_top button:first-child{
+			margin-right: 10px;
+		}
+		.lmgl_modal_fanhui{
+			float: left;
+			cursor: pointer;
+		}
+		#lmgl_modal{
+			background: rgba(0,0,0,0.1);
+		}
+		#lmgl_dialog{
+			width: 300px;
+			margin-right: 0;
+			margin-top: 0;
+		}
+		.lmgl_gdt{
+			height: 720px;
+			overflow: auto;
+		}
+		.lmgl_message{
+			color: red;
+		}
+		.del_i{
+			margin-left: 15px;
+			color: red;
+			cursor: pointer;
+
+		}
+		.td_i i:first-child{
+			cursor: pointer;
+			color: green;
+		}
+	</style>
+	<script>
+		$(function(){
+			var categories = [];
+			var static = '新增';
+			var lmglID = ''
+			//设置模态框的高度
+			$('#lmgl_content').height($(window).height());
+			// 点击新增，模态框显示
+			$('button:contains(新增)').click(function(){
+				$('.lmgl_title').html('添加栏目');
+				static='新增';
+				// 重置模态框内容
+				$('button[type=reset]').trigger('click');
+				// 显示模态框
+				$('#lmgl_modal').show();
+				addMotal();
+			})
+			// 点击模态框返回按钮
+			$('.lmgl_modal_fanhui').click(function(){
+				// 隐藏模态框
+				$('#lmgl_modal').hide();
+			})
+			lmglData();
+			// 加载数据
+			function lmglData(){
+				$('.lmgl_tr').empty();
+				$.get(baseURL+'/manager/category/findAllCategory',function(res){
+					categories = res.data;
+				res.data.forEach(function(item,index){
+					$(`
+				<tr class='lmgl_tr'>
+					<td><input type="checkbox" value="`+item.id+`"/></td>
+					<td>`+item.name+`</td>
+					<td>`+(item.parent?item.parent.name:'null')+`</td>
+					<td>`+item.comment+`</td>
+					<td class="td_i">
+						<i class="iconfont icon-edit-1-copy update_i" title="修改"></i>
+						<i class="iconfont icon-shanchu del_i" title="删除"></i>
+					</td>
+				</tr>
+				`).appendTo($('.lmgl_table'));
+				})
+			})
+			}
+			//为模态框的父栏目添加信息
+			$.get(baseURL+'/manager/category/findAllCategory',function(res){
+				res.data.forEach(function(item,index){
+					var $option = $(`<option value="`+item.id+`" name='par'>`+item.name+`</option>`);
+					$option.appendTo('#lmgl_P');
+				})
+			})
+			// 点击模态框提交按钮,提交数据
+			$('#lmgl_tj').click(function(){
+				var name = $('input[name=name]').val(); 
+				var parentId = $('select[name=parentId]').val(); 
+				var comment = $('textarea[name=comment]').val(); 
+				if(name && comment){
+					var obj = {
+						name:name,
+						comment:comment,
+						no:'',
+						parentId:parentId,
+					}
+					if(static=='修改'){
+						obj.id=lmglID;
+					}
+					$.post(baseURL+'/manager/category/saveOrUpdateCategory',obj,function(res){
+						// 添加数据成功,重新加载数据,关闭模态框
+						console.log(res,'添加成功');
+						lmglData();
+						$('#lmgl_modal').hide();
+					})
+				}else{
+					$('.lmgl_message').html('请输入完整的信息');
+				}				
+			})
+			//点击删除按钮，删除单行数据
+			$('.lmgl_table').on({
+				click:function(){
+					var delId = $(this).closest('tr').find('input').val();
+					$.get(baseURL+'/manager/category/deleteCategoryById',{id:delId},function(res){
+						if(res.status==200){
+							lmglData();
+							alert('删除成功');
+						}else{
+							alert('删除失败');
+							console.log(res.message)
+						}
+					})
+				}
+			},'.del_i');
+			//点击修改按钮，修改当前行信息
+			$('.lmgl_table').on({
+				click:function(){
+					static='修改';
+					$('.lmgl_message').html('');
+					var id = $(this).closest('tr').find('input[type=checkbox]').val();
+					lmglID = id;
+					var a = categories.filter(function(item){
+						return item.id ==id; 
+					})[0];
+					$('.lmgl_title').html('修改信息');
+					$('input[name=name]').val(a.name);
+					$('textarea[name=comment]').val(a.comment);
+					addMotal(function(){
+						$('select[name=parentId]').val(a.parent?a.parent.id:'');
+					});
+				}
+			},'.update_i')
+
+			function addMotal(handle){
+				$('select option:not(:first)').remove();
+				$.get(baseURL+'/manager/category/findAllCategory',function(res){
+					res.data.forEach(function(item,index){
+						$(`<option value="`+item.id+`">`+item.name+`</option>`).appendTo('select[name=parentId]');
+					});
+					if(handle){
+						handle()
+					}
+					$('#lmgl_modal').show();
+				})
+			}
+
+			// 批量删除
+			$('button:contains(批量删除)').click(function(){
+				var ids = $('input[type=checkbox]:checked').map(function(index,item){
+					return $(item).val();
+				}).get();
+				var obj = {
+					ids:ids.toString()
+				}
+				$.post(baseURL+'/manager/category/batchDeleteCategory',obj,function(res){
+					if(res.status==200){
+						alert('批量删除成功!');
+						lmglData();
+					}else{
+						alert('批量删除失败');
+						console.log(res.message);
+					}
+				})
+			})
+		})
+	</script>
+</div>

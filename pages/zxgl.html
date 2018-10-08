@@ -1,0 +1,267 @@
+<div id="zxgl">
+	<div class="zxgl_top">
+		<select class="firstselect" name="firstselect" style="width: 200px;height: 30px;"></select>
+		<button class="btn btn-success btn-sm" id="zxgl_xz">新增</button>
+		<button class="btn btn-success btn-sm " id="zxgl_plsc">批量删除</button>
+	</div>
+	<div class="zxgl_body">
+		<table class="table table-bordered text-center zxgl_table">
+			<tr class="text-center">
+				<th>编号</th>
+				<th>文章标题</th>
+				<th>所属栏目</th>
+				<th>列表样式</th>
+				<th>作者</th>
+				<th>发布时间</th>
+				<th>阅读次数</th>
+				<th>操作</th>
+			</tr>
+		</table>
+	</div>
+	<div class="modal" id="zxgl_modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header text-center" >
+					<span  class="fanhui"><i class="iconfont icon-zuo"></i>返回</span>
+					<span class="modal_title">发布资讯</span>
+				</div>
+				<div class="modal-body">
+					<form action="">
+						<div class="form-group">
+							<label for="">标题</label>
+							<input name="title" type="text" class="form-control"/>
+						</div>
+						<div class="form-group">
+							<label for="">所属栏目</label>
+							<select name="categoryId" class="form-control secondselect"></select>
+						</div>
+						<div class="form-group">
+							<label for="" style="display: block;">列表缩略图</label>
+							<div style="display: inline-block;">
+								<input type="radio" name="liststyle" id="one" value="style-one" />
+								<label for="one"><img src="./images/one.jpg"/></label>
+							</div>
+							<div style="display: inline-block; margin-left: 20px;">
+								<input type="radio" name="liststyle" id="two" value="style-two"/>
+								<label for="two"><img src="./images/two.jpg"/></label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="">正文</label>
+							<textarea class="form-control" name="content" cols="30" rows="10" style="resize: none;"></textarea>
+						</div>
+						<div class="form-group hide" >
+							<button class="btn btn-success btn-sm" type="reset">重置</button>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<span class="message"></span>
+					<button class="btn btn-success btn-sm fabu">发布</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		#zxgl{
+			background-color: #fff;
+			margin: 5px;
+			padding: 10px;
+		}
+		.zxgl_top{
+			margin-bottom: 10px;
+			overflow: hidden;
+		}
+		.zxgl_top *{
+			float: left;
+			margin-right: 15px;
+
+		}
+		.zxgl_body{
+			overflow: auto;
+			height: 750px;
+		}
+		.zxgl_body table th{
+			text-align: center;
+		}
+		.form-group img{
+			width: 240px;
+			height: 100px;
+		}
+		.modal-header{
+			position: relative;
+		}
+		.modal-header span:first-child{
+			position: absolute;
+			left: 10px;
+		}
+		.icon-edit-1-copy{
+			cursor: pointer;
+			color: green;
+		}
+		.fanhui{
+			cursor: pointer;
+		}
+		.icon-shanchu{
+			cursor: pointer;
+			color: red;
+			margin-left: 10px;
+		}
+		.message{
+			color: red;
+		}
+	</style>
+	<script>
+		$(function(){
+			var lamId = '';
+			var dats = [];
+			var article={};
+			$('.firstselect').change(function(){
+				var id = $(this).val();
+				lamId = id;
+				zxglData(id);
+			})
+			firstselectId();
+			//为第一个select添加option数据
+			function firstselectId(){
+				$('.firstselect').empty();
+				$.get(baseURL+'/manager/category/findAllCategory',function(res){
+					console.log(res.data)
+					res.data.forEach(function(item,index){
+						$(`<option value="`+item.id+`">`+item.name+`</option>`).appendTo('.firstselect')
+					})
+					lamId = $('.firstselect').val();
+					zxglData($('.firstselect').val());
+				})
+			}
+			// 加载数据
+			function zxglData(lmId){
+				$('table tr:not(:first)').remove();
+				var obj = {
+					page :0,
+					pageSize:1000,
+					categoryId:lmId
+				}
+				$.get(baseURL+'/manager/article/findArticle',obj,function(res){
+					if(res.status == 200){
+						if(res.data&&res.data.list){
+							dats = res.data.list;
+							res.data.list.forEach(function(item,index){
+								$(`<tr>
+									<td><input type="checkbox" value="`+item.id+`"/></td>
+									<td>`+item.title+`</td>
+									<td>`+item.category.name+`</td>
+									<td>`+item.liststyle+`</td>
+									<td>`+item.author+`</td>
+									<td>`+item.publishtime+`</td>
+									<td>`+item.readtimes+`</td>
+									<td>
+										<i class="iconfont icon-edit-1-copy xiugai" title="修改"></i>
+										<i class="iconfont icon-shanchu shanchu" title="删除"></i>
+									</td>
+									</tr>`).appendTo('.zxgl_body table')
+							})
+						}
+					}else{
+						alert('该栏目无资讯。')
+					}
+					
+				})
+			}
+			//新增数据
+			$('#zxgl_xz').click(function(){
+				$('button[type=reset]').trigger('click');
+				$('.message').html('');
+				lamId = $('.firstselect').val()
+				addOption(lamId);
+			});
+			//获取当前栏目，添加到模态框select 的option
+			function addOption(secondId){
+				$('.secondselect').empty();
+				$.get(baseURL+'/manager/category/findAllCategory',function(res){
+					res.data.forEach(function(item,index){
+						$(`<option value="`+item.id+`">`+item.name+`</option>`).appendTo('.secondselect');
+					})
+					console.log(secondId);
+					$('.secondselect').val(secondId);
+					$('#zxgl_modal').show();
+				});
+			}
+			// 关闭模态框
+			$('.fanhui').click(function(){
+				$('#zxgl_modal').hide();
+			});
+			// 发布数据
+			$('.fabu').click(function(){
+				var title = $('input[name=title]').val();
+				var categoryId = $('select[name=categoryId]').val()
+				var liststyle = $('input[name=liststyle]:checked').val();
+				var content = $('textarea[name=content]').val();
+				if(title && categoryId && liststyle && content){
+					var obj = {
+						title: title,
+						categoryId: categoryId,
+						liststyle:liststyle,
+						content:content
+					}
+					$.post(baseURL+'/manager/article/saveOrUpdateArticle',obj,function(res){
+						alert('发布成功');
+						lamId = $('.secondselect').val();
+						zxglData(lamId);
+						$('#zxgl_modal').hide();
+						$('.firstselect').val(lamId)
+					})
+				}else{
+					$('.message').html('请填写完整的数据');
+				}
+			})
+			//单行删除
+			$('.zxgl_table').on({
+				click:function(){
+					var id = $(this).closest('tr').find('input').val();
+					$.get(baseURL+'/manager/article/deleteArticleById',{id:id},function(res){
+						alert('删除成功');
+						zxglData(lamId)
+					})
+				}
+			},'.shanchu')
+			//批量删除
+			$('#zxgl_plsc').click(function(){
+				var ids = $('input[type=checkbox]:checked').map(function(index,item){
+					return $(item).val()
+				}).get();
+				var obj = {
+					ids:ids.toString(),
+				}
+				$.post(baseURL+'/manager/article/batchDeleteArticle',obj,function(res){
+					if(res.status==200){
+						alert('批量删除成功！');
+						zxglData(lamId);
+					}else{
+						alert('删除失败');
+						console.log(res.message);
+					}
+				})
+			})
+			//修改
+			$('.zxgl_table').on({
+				click:function(){
+					$('button[type=reset]').trigger('click');
+					$('.message').html('');
+					var id = $(this).closest('tr').find('input').val();
+					lamId = id;
+					var article = dats.filter(function(item){
+						return item.id ==id; 
+					})[0];
+					$('.modal_title').html('修改资讯');
+					$('input[name=title]').val(article.title);
+					$('textarea[name=content]').val(article.content);
+					$('input[name=liststyle]').prop('checked',false);
+					$('input[value='+article.liststyle+']').prop('checked',true);
+					addOption(article.category.id);
+				}
+			},'.xiugai')
+		})
+
+	</script>
+</div>
